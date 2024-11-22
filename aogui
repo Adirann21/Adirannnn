@@ -8,7 +8,7 @@ local function toggleChestLabeler()
     if not getgenv().on then
         print("Chest Labeler OFF")
         -- Cleanup: Remove all ChestGui elements
-        for i, v in pairs(workspace.Map.Temporary:GetChildren()) do
+        for _, v in pairs(workspace.Map.Temporary:GetChildren()) do
             if v.Name == "Dark Sealed Chest" then
                 local chestGui = v:FindFirstChild("ChestGui")
                 if chestGui then
@@ -35,34 +35,61 @@ local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "ToggleGui"
+screenGui.Name = "AdiranArcaneOdysseyGUI"
 screenGui.Parent = playerGui
+
+-- UI Corner Utility
+local function createUICorner(radius, parent)
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.CornerRadius = UDim.new(0, radius)
+    uiCorner.Parent = parent
+end
 
 -- Main Frame
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 300, 0, 200)
-mainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.Size = UDim2.new(0, 350, 0, 250)
+mainFrame.Position = UDim2.new(0.5, -175, 0.5, -125)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 mainFrame.BorderSizePixel = 0
 mainFrame.Visible = true
 mainFrame.Parent = screenGui
+createUICorner(15, mainFrame)
 
--- Red Header
+-- Drop Shadow
+local shadow = Instance.new("Frame")
+shadow.Size = mainFrame.Size + UDim2.new(0, 10, 0, 10)
+shadow.Position = mainFrame.Position + UDim2.new(0, 5, 0, 5)
+shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+shadow.BorderSizePixel = 0
+shadow.ZIndex = -1
+shadow.Parent = screenGui
+createUICorner(15, shadow)
+
+-- Gradient Background
+local gradient = Instance.new("UIGradient")
+gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(50, 0, 0))
+}
+gradient.Rotation = 90
+gradient.Parent = mainFrame
+
+-- Header
 local header = Instance.new("Frame")
 header.Name = "Header"
-header.Size = UDim2.new(1, 0, 0, 30)
-header.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-header.BorderSizePixel = 0
+header.Size = UDim2.new(1, 0, 0, 40)
+header.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
 header.Parent = mainFrame
+createUICorner(15, header)
 
 local headerLabel = Instance.new("TextLabel")
 headerLabel.Size = UDim2.new(1, 0, 1, 0)
 headerLabel.BackgroundTransparency = 1
-headerLabel.Text = "Toggle Features"
+headerLabel.Text = "Adiran's Arcane Odyssey GUI"
 headerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 headerLabel.Font = Enum.Font.GothamBold
-headerLabel.TextSize = 18
+headerLabel.TextSize = 20
 headerLabel.Parent = header
 
 -- Dragging functionality
@@ -99,13 +126,14 @@ end)
 -- Close Button
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0, 30, 0, 30)
-closeButton.Position = UDim2.new(1, -35, 0, 0)
-closeButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+closeButton.Position = UDim2.new(1, -35, 0, 5)
+closeButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 closeButton.Text = "X"
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeButton.Font = Enum.Font.GothamBold
-closeButton.TextSize = 18
+closeButton.TextSize = 16
 closeButton.Parent = header
+createUICorner(8, closeButton)
 
 closeButton.MouseButton1Click:Connect(function()
     mainFrame.Visible = false
@@ -113,14 +141,15 @@ end)
 
 -- Reopen GUI Button
 local openButton = Instance.new("TextButton")
-openButton.Size = UDim2.new(0, 100, 0, 50)
-openButton.Position = UDim2.new(0, 10, 0.8, -60)
-openButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+openButton.Size = UDim2.new(0, 100, 0, 40)
+openButton.Position = UDim2.new(0, 10, 0.8, -50)
+openButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 openButton.Text = "Open GUI"
 openButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 openButton.Font = Enum.Font.GothamBold
 openButton.TextSize = 18
 openButton.Parent = screenGui
+createUICorner(10, openButton)
 
 openButton.MouseButton1Click:Connect(function()
     mainFrame.Visible = true
@@ -128,101 +157,34 @@ end)
 
 -- Chest Labeler Button
 local chestLabelButton = Instance.new("TextButton")
-chestLabelButton.Name = "ChestLabelButton"
-chestLabelButton.Size = UDim2.new(0, 200, 0, 50)
-chestLabelButton.Position = UDim2.new(0.5, -100, 0.3, 0)
+chestLabelButton.Size = UDim2.new(0.8, 0, 0, 50)
+chestLabelButton.Position = UDim2.new(0.1, 0, 0.3, 0)
 chestLabelButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 chestLabelButton.Text = "Chest Labeler (ON)"
 chestLabelButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 chestLabelButton.Font = Enum.Font.Gotham
 chestLabelButton.TextSize = 16
 chestLabelButton.Parent = mainFrame
+createUICorner(12, chestLabelButton)
+
+chestLabelButton.MouseButton1Click:Connect(function()
+    toggleChestLabeler()
+    chestLabelButton.Text = getgenv().on and "Chest Labeler (ON)" or "Chest Labeler (OFF)"
+end)
 
 -- Kill Aura Button
 local killAuraButton = Instance.new("TextButton")
-killAuraButton.Name = "KillAuraButton"
-killAuraButton.Size = UDim2.new(0, 200, 0, 50)
-killAuraButton.Position = UDim2.new(0.5, -100, 0.5, 0)
+killAuraButton.Size = UDim2.new(0.8, 0, 0, 50)
+killAuraButton.Position = UDim2.new(0.1, 0, 0.5, 0)
 killAuraButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 killAuraButton.Text = "Kill Aura (ON)"
 killAuraButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 killAuraButton.Font = Enum.Font.Gotham
 killAuraButton.TextSize = 16
 killAuraButton.Parent = mainFrame
-
--- Button functionality
-chestLabelButton.MouseButton1Click:Connect(function()
-    toggleChestLabeler()
-    if getgenv().on then
-        chestLabelButton.Text = "Chest Labeler (ON)"
-    else
-        chestLabelButton.Text = "Chest Labeler (OFF)"
-    end
-end)
+createUICorner(12, killAuraButton)
 
 killAuraButton.MouseButton1Click:Connect(function()
     toggleKillAura()
-    if getgenv().a then
-        killAuraButton.Text = "Kill Aura (ON)"
-    else
-        killAuraButton.Text = "Kill Aura (OFF)"
-    end
-end)
-
--- Dark Chest Labeler Loop
-spawn(function()
-    while task.wait(0.25) do
-        if not getgenv().on then
-            continue
-        end
-
-        for i, v in pairs(workspace.Map.Temporary:GetChildren()) do
-            if v.Name == "Dark Sealed Chest" then
-                if v:FindFirstChild("ChestGui") == nil then
-                    local billboardGui = Instance.new("BillboardGui")
-                    billboardGui.Name = "ChestGui"
-                    billboardGui.Size = UDim2.new(0, 100, 0, 50)
-                    billboardGui.Adornee = v
-                    billboardGui.AlwaysOnTop = true
-                    billboardGui.Parent = v
-
-                    local frame = Instance.new("Frame")
-                    frame.Size = UDim2.new(1, 0, 1, 0)
-                    frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-                    frame.BackgroundTransparency = 0.5
-                    frame.Parent = billboardGui
-
-                    local label = Instance.new("TextLabel")
-                    label.Size = UDim2.new(1, 0, 1, 0)
-                    label.BackgroundTransparency = 1
-                    label.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    label.Text = v.Name
-                    label.Parent = frame
-                end
-            end
-        end
-    end
-end)
-
--- Kill Aura Loop
-spawn(function()
-    while task.wait() do
-        if not getgenv().a then
-            continue
-        end
-
-        for i, v in pairs(workspace.Enemies:GetChildren()) do
-            if v:IsA("Model") and v:FindFirstChildOfClass("Humanoid") and v:FindFirstChildOfClass("Humanoid").Health > 0 and game.Players.LocalPlayer:DistanceFromCharacter(v.PrimaryPart.Position) < 21 then
-                local args = {
-                    [1] = 0,
-                    [2] = game:GetService("Players").LocalPlayer.Character,
-                    [3] = v,
-                    [4] = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool"),
-                    [5] = "Slash"
-                }
-
-                game:GetService("ReplicatedStorage").RS.Remotes.Combat.DealWeaponDamage:FireServer(unpack(args))
-            end
-        end
-    end
+    killAuraButton.Text = getgenv().a and "Kill Aura (ON)" or "Kill Aura (OFF)"
 end)
